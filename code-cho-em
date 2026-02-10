@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Valentine của tụi mình 💖</title>
+    <style>
+      :root {
+        --bg1: #ffe7ef;
+        --bg2: #ffd4e6;
+        --card: #ffffff;
+        --accent: #ff3f81;
+        --accent-dark: #e13272;
+        --text: #4b1f32;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--text);
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      }
+
+      .hearts {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .heart {
+        position: absolute;
+        font-size: 1.2rem;
+        opacity: 0;
+        animation: float 6s linear infinite;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(30px) scale(0.8);
+          opacity: 0;
+        }
+        15% {
+          opacity: 0.8;
+        }
+        100% {
+          transform: translateY(-120vh) scale(1.35);
+          opacity: 0;
+        }
+      }
+
+      .card {
+        position: relative;
+        z-index: 1;
+        width: min(92vw, 620px);
+        background: var(--card);
+        border-radius: 28px;
+        padding: 28px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        text-align: center;
+      }
+
+      h1 {
+        margin-top: 0;
+        font-size: clamp(1.5rem, 2.7vw, 2.2rem);
+      }
+
+      .btn-zone {
+        position: relative;
+        height: 180px;
+        margin-top: 24px;
+      }
+
+      button {
+        border: 0;
+        border-radius: 999px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 1rem;
+        padding: 13px 26px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      #yesBtn {
+        background: var(--accent);
+        color: white;
+        box-shadow: 0 8px 20px rgba(255, 63, 129, 0.35);
+      }
+
+      #yesBtn:hover {
+        transform: translateY(-2px) scale(1.05);
+      }
+
+      #noBtn {
+        position: absolute;
+        left: 70%;
+        top: 70px;
+        transform: translate(-50%, 0);
+        background: #fff0f6;
+        color: var(--accent-dark);
+        border: 2px solid #ffd0e2;
+      }
+
+      .message {
+        margin-top: 20px;
+        min-height: 56px;
+        font-size: 1.05rem;
+        font-weight: 600;
+      }
+
+      .show {
+        animation: pop 0.45s ease;
+      }
+
+      @keyframes pop {
+        0% {
+          transform: scale(0.9);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="hearts" id="hearts"></div>
+
+    <main class="card">
+      <h1>Em có đồng ý làm Valentine của anh không? 💘</h1>
+
+      <div class="btn-zone" id="btnZone">
+        <button id="yesBtn">Đồng ý 💖</button>
+        <button id="noBtn">Không 🙈</button>
+      </div>
+
+      <p class="message" id="message"></p>
+    </main>
+
+    <script>
+      const zone = document.getElementById("btnZone");
+      const noBtn = document.getElementById("noBtn");
+      const yesBtn = document.getElementById("yesBtn");
+      const message = document.getElementById("message");
+      const hearts = document.getElementById("hearts");
+
+      const random = (min, max) => Math.random() * (max - min) + min;
+
+      function moveNoBtn() {
+        const padding = 8;
+        const zoneRect = zone.getBoundingClientRect();
+        const btnRect = noBtn.getBoundingClientRect();
+
+        const maxX = zoneRect.width - btnRect.width - padding;
+        const maxY = zoneRect.height - btnRect.height - padding;
+
+        const x = random(padding, Math.max(padding, maxX));
+        const y = random(8, Math.max(8, maxY));
+
+        noBtn.style.left = `${x}px`;
+        noBtn.style.top = `${y}px`;
+        noBtn.style.transform = "none";
+      }
+
+      // Né chuột: di chuyển cả khi hover lẫn khi click
+      ["mouseenter", "mouseover", "mousedown", "touchstart", "click"].forEach((evt) => {
+        noBtn.addEventListener(evt, (e) => {
+          e.preventDefault();
+          moveNoBtn();
+        });
+      });
+
+      yesBtn.addEventListener("click", () => {
+        message.textContent =
+          "Yayyyy! Anh biết mà 😍 Vậy hẹn em một buổi Valentine thật ngọt ngào nhé!";
+        message.classList.remove("show");
+        void message.offsetWidth;
+        message.classList.add("show");
+
+        for (let i = 0; i < 20; i += 1) {
+          spawnHeart(true);
+        }
+      });
+
+      function spawnHeart(burst = false) {
+        const el = document.createElement("span");
+        el.className = "heart";
+        el.textContent = ["💖", "💘", "💕", "💗"][Math.floor(Math.random() * 4)];
+        el.style.left = `${random(0, 100)}vw`;
+        el.style.bottom = burst ? `${random(10, 45)}vh` : "-30px";
+        el.style.animationDuration = `${random(4.5, 8)}s`;
+        el.style.fontSize = `${random(14, 34)}px`;
+        hearts.appendChild(el);
+
+        setTimeout(() => {
+          el.remove();
+        }, 8500);
+      }
+
+      // Tim bay nền
+      setInterval(() => spawnHeart(false), 320);
+    </script>
+  </body>
+</html>
